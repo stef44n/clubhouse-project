@@ -4,7 +4,13 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const db = require("../models/db");
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
+    if (req.session.user) {
+        const user = await db.oneOrNone("SELECT * FROM users WHERE id = $1", [
+            req.session.user.id,
+        ]);
+        req.session.user = user; // Keep session updated
+    }
     res.render("index", { user: req.session.user });
 });
 
@@ -48,6 +54,11 @@ router.post(
                 [firstName, lastName, username, hashedPassword]
             );
 
+            const newUser = await db.one(
+                "SELECT * FROM users WHERE username = $1",
+                [username]
+            );
+            req.session.user = newUser;
             res.redirect("/");
         } catch (err) {
             console.error(err);
@@ -59,5 +70,41 @@ router.post(
         }
     }
 );
+
+const SECRET_PASSCODE = "club123"; //
+
+// Show Membership Form
+router.get("/membership", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/");
+    }
+    res.render("membership", { error: null });
+});
+
+// Handle Membership Form Submission
+router.post("/membership", async (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/");
+    }
+
+    const { passcode } = req.body;
+
+    if (passcode === SECRET_PASSCODE) {
+        try {
+            await db.none("UPDATE users SET membership = true WHERE id = $1", [
+                req.session.user.id,
+            ]);
+            req.session.user.membership = true; // Update session data
+            res.redirect("/");
+        } catch (err) {
+            console.error(err);
+            res.render("membership", {
+                error: "An error occurred. Please try again.",
+            });
+        }
+    } else {
+        res.render("membership", { error: "Incorrect passcode!" });
+    }
+});
 
 module.exports = router;

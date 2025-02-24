@@ -14,6 +14,7 @@ app.use(
         secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
+        cookie: { secure: false }, // Change to true if using HTTPS
     })
 );
 

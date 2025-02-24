@@ -6,11 +6,17 @@
     </head>
     <body>
         <h1>Welcome to the Clubhouse!</h1>
+
         <% if (user) { %>
         <p>Logged in as <%= user.username %></p>
+        <p>
+            Membership Status: <%= user.membership ? "Member" : "Not a Member"
+            %>
+        </p>
+        <p><a href="/membership">Join the Club</a></p>
         <% } else { %>
         <p>You are not logged in.</p>
-        <% } %>
         <p><a href="/signup">Sign Up</a></p>
+        <% } %>
     </body>
 </html>
