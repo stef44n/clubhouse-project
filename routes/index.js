@@ -3,6 +3,7 @@ const router = express.Router();
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const db = require("../models/db");
+const passport = require("passport");
 
 router.get("/", async (req, res) => {
     if (req.session.user) {
@@ -11,7 +12,7 @@ router.get("/", async (req, res) => {
         ]);
         req.session.user = user; // Keep session updated
     }
-    res.render("index", { user: req.session.user });
+    res.render("index", { user: req.user });
 });
 
 // Signup Page
@@ -105,6 +106,34 @@ router.post("/membership", async (req, res) => {
     } else {
         res.render("membership", { error: "Incorrect passcode!" });
     }
+});
+
+// Show Login Page
+router.get("/login", (req, res) => {
+    res.render("login", { messages: req.flash() });
+});
+
+// Handle Login Submission
+router.post("/login", (req, res, next) => {
+    passport.authenticate("local", (err, user, info) => {
+        if (err) return next(err);
+        if (!user) {
+            req.flash("error", info.message);
+            return res.redirect("/login");
+        }
+        req.logIn(user, (err) => {
+            if (err) return next(err);
+            // console.log("User logged in, session:", req.session); // Debugging session data
+            return res.redirect("/");
+        });
+    })(req, res, next);
+});
+
+router.get("/logout", (req, res) => {
+    req.logout((err) => {
+        if (err) return next(err);
+        res.redirect("/");
+    });
 });
 
 module.exports = router;
