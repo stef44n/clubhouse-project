@@ -7,6 +7,7 @@ const flash = require("connect-flash");
 const bcrypt = require("bcrypt");
 const db = require("./models/db");
 const app = express();
+const messageRoutes = require("./routes/messages");
 require("dotenv").config();
 
 // Middleware
@@ -77,6 +78,7 @@ passport.deserializeUser(async (id, done) => {
 
 // Routes (will create later)
 app.use("/", require("./routes/index"));
+app.use("/messages", messageRoutes);
 
 // Start Server
 app.listen(3000, () => {
