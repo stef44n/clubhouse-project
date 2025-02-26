@@ -13,9 +13,17 @@
             Membership Status: <%= user.membership ? "Member" : "Not a Member"
             %>
         </p>
-        <a href="/messages/new">Create a New Message</a>
-
+        <% if (user && !user.membership) { %>
         <p><a href="/membership">Join the Club</a></p>
+        <% } %> <% if (user && user.membership && !user.admin) { %>
+        <a href="/admin">Become an Admin</a>
+        <br />
+        <br />
+        <% } %>
+
+        <a href="/messages/new">Create a New Message</a>
+        <br />
+        <br />
         <a href="/logout">Logout</a>
         <% } else { %>
         <p>You are not logged in.</p>
@@ -28,7 +36,8 @@
             <li>
                 <h3><%= msg.title %></h3>
                 <p><%= msg.text %></p>
-                <% if (user) { %>
+
+                <% if (user && user.membership) { %>
                 <p>
                     <strong>By:</strong> <%= msg.first_name %> <%= msg.last_name
                     %>
@@ -37,6 +46,17 @@
                     <strong>Posted on:</strong> <%= new
                     Date(msg.created_at).toLocaleString() %>
                 </p>
+                <% } else { %>
+                <p><em>(Author hidden – Members Only)</em></p>
+                <% } %> <% if (user && user.admin) { %>
+                <!-- Form to delete a message using method-override -->
+                <form
+                    action="/messages/<%= msg.id %>?_method=DELETE"
+                    method="POST"
+                    style="display: inline"
+                >
+                    <button type="submit">Delete</button>
+                </form>
                 <% } %>
             </li>
             <% }) %>

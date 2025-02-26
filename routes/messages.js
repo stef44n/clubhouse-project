@@ -29,4 +29,23 @@ router.post("/new", isAuthenticated, async (req, res) => {
     }
 });
 
+// Middleware to check if user is authenticated and admin
+function isAdmin(req, res, next) {
+    if (req.isAuthenticated() && req.user.admin) {
+        return next();
+    }
+    res.status(403).send("Forbidden: Admins only");
+}
+
+// Delete a message (only for admin users)
+router.delete("/:id", isAdmin, async (req, res) => {
+    try {
+        await db.none("DELETE FROM messages WHERE id = $1", [req.params.id]);
+        res.redirect("/");
+    } catch (err) {
+        console.error("Error deleting message:", err);
+        res.status(500).send("Error deleting message");
+    }
+});
+
 module.exports = router;

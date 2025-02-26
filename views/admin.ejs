@@ -1,0 +1,11 @@
+<h2>Become an Admin</h2>
+
+<% if (error) { %>
+<p style="color: red"><%= error %></p>
+<% } %>
+
+<form action="/admin" method="POST">
+    <label for="passcode">Enter Admin Passcode:</label>
+    <input type="password" name="passcode" required />
+    <button type="submit">Submit</button>
+</form>

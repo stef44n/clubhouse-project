@@ -4,6 +4,7 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const db = require("../models/db");
 const passport = require("passport");
+require("dotenv").config();
 
 router.get("/", async (req, res) => {
     try {
@@ -19,7 +20,7 @@ router.get("/", async (req, res) => {
         // Fetch all messages and join with users to get author names
         const messages = await db.manyOrNone(
             `SELECT messages.id, messages.title, messages.text, messages.created_at, 
-                    users.first_name, users.last_name 
+                    users.first_name, users.last_name, users.membership
              FROM messages 
              JOIN users ON messages.user_id = users.id 
              ORDER BY created_at DESC`
@@ -94,15 +95,15 @@ const SECRET_PASSCODE = "club123"; //
 
 // Show Membership Form
 router.get("/membership", (req, res) => {
-    if (!req.session.user) {
+    if (!req.user) {
         return res.redirect("/");
     }
-    res.render("membership", { error: null });
+    res.render("membership", { user: req.user, error: null });
 });
 
 // Handle Membership Form Submission
 router.post("/membership", async (req, res) => {
-    if (!req.session.user) {
+    if (!req.user) {
         return res.redirect("/");
     }
 
@@ -111,18 +112,22 @@ router.post("/membership", async (req, res) => {
     if (passcode === SECRET_PASSCODE) {
         try {
             await db.none("UPDATE users SET membership = true WHERE id = $1", [
-                req.session.user.id,
+                req.user.id,
             ]);
-            req.session.user.membership = true; // Update session data
+            req.user.membership = true; // Update session data
             res.redirect("/");
         } catch (err) {
             console.error(err);
             res.render("membership", {
+                user: req.user,
                 error: "An error occurred. Please try again.",
             });
         }
     } else {
-        res.render("membership", { error: "Incorrect passcode!" });
+        res.render("membership", {
+            user: req.user,
+            error: "Incorrect passcode!",
+        });
     }
 });
 
@@ -152,6 +157,52 @@ router.get("/logout", (req, res) => {
         if (err) return next(err);
         res.redirect("/");
     });
+});
+
+router.get("/admin", (req, res) => {
+    if (!req.user) {
+        return res.redirect("/login");
+    }
+
+    if (!req.user.membership) {
+        return res.status(403).send("Only members can become admins.");
+    }
+
+    res.render("admin", { user: req.user, error: null });
+});
+
+router.post("/admin", async (req, res) => {
+    const { passcode } = req.body;
+    const ADMIN_PASSCODE = process.env.ADMIN_SECRET;
+
+    if (!req.user) {
+        return res.redirect("/login");
+    }
+
+    if (!req.user.membership) {
+        return res.status(403).send("Only members can become admins.");
+    }
+
+    if (passcode === ADMIN_PASSCODE) {
+        try {
+            await db.none("UPDATE users SET admin = true WHERE id = $1", [
+                req.user.id,
+            ]);
+            req.user.admin = true; // Update req.user to reflect the change
+            return res.redirect("/");
+        } catch (err) {
+            console.error(err);
+            return res.render("admin", {
+                user: req.user,
+                error: "Something went wrong. Please try again.",
+            });
+        }
+    } else {
+        return res.render("admin", {
+            user: req.user,
+            error: "Incorrect passcode. Try again.",
+        });
+    }
 });
 
 module.exports = router;
