@@ -7,7 +7,13 @@ const flash = require("connect-flash");
 const bcrypt = require("bcrypt");
 const db = require("./models/db");
 const app = express();
+
+// Route files
+const indexRoutes = require("./routes/index");
+const authRoutes = require("./routes/auth");
+const membershipRoutes = require("./routes/membership");
 const messageRoutes = require("./routes/messages");
+const adminRoutes = require("./routes/admin");
 require("dotenv").config();
 
 // Middleware
@@ -76,9 +82,12 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-// Routes (will create later)
-app.use("/", require("./routes/index"));
+// Routes
+app.use("/", indexRoutes); // Homepage, general routes
+app.use("/", authRoutes); // Login, signup, logout
+app.use("/membership", membershipRoutes);
 app.use("/messages", messageRoutes);
+app.use("/admin", adminRoutes);
 
 // Start Server
 app.listen(3000, () => {
