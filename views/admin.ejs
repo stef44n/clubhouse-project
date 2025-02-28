@@ -1,11 +1,21 @@
-<h2>Become an Admin</h2>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Become an Admin</title>
+        <link rel="stylesheet" href="/css/retro_styles.css" />
+    </head>
+    <body>
+        <h2>Become an Admin</h2>
 
-<% if (error) { %>
-<p style="color: red"><%= error %></p>
-<% } %>
+        <% if (error) { %>
+        <p style="color: red"><%= error %></p>
+        <% } %>
 
-<form action="/admin" method="POST">
-    <label for="passcode">Enter Admin Passcode:</label>
-    <input type="password" name="passcode" required />
-    <button type="submit">Submit</button>
-</form>
+        <form action="/admin" method="POST">
+            <label for="passcode">Enter Admin Passcode:</label>
+            <input type="password" name="passcode" required />
+            <button type="submit">Submit</button>
+        </form>
+    </body>
+</html>

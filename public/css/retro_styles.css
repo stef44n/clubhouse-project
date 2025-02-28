@@ -1,0 +1,178 @@
+/* Import a retro pixel font */
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap");
+
+/* General Styles */
+body {
+    font-family: "Press Start 2P", cursive;
+    background-color: #fae3c6;
+    color: #6b4226;
+    text-align: center;
+    padding: 20px;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow-y: auto;
+}
+
+/* Soft CRT Screen Effect */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("https://www.transparenttextures.com/patterns/noise.png");
+    opacity: 0.05;
+    pointer-events: none;
+}
+
+/* Retro Buttons */
+button {
+    background-color: #e89060;
+    border: 2px solid #ff9f80;
+    color: #ffffff;
+    font-size: 14px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: 0.3s;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #ff9f80;
+    color: #6b4226;
+}
+
+/* Retro Box Styling */
+.container {
+    border: 4px solid #ff9f80;
+    padding: 20px;
+    display: inline-block;
+    box-shadow: 0 0 10px #ff9f80;
+    background-color: #fff2d8;
+    border-radius: 10px;
+}
+
+/* Links */
+a {
+    color: #6b4226;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #ff9f80;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+/* Message Container */
+.message-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Responsive Grid */
+@media (min-width: 600px) {
+    .message-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 900px) {
+    .message-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Individual Message Styling */
+.message {
+    font-family: "VT323", monospace;
+    font-size: 18px;
+    line-height: 1.5;
+    color: #4a2f1b;
+    background-color: #fff2d8;
+    border: 4px solid #ff9f80;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ff9f80;
+    text-align: left;
+}
+
+h1,
+h2,
+h3 {
+    font-family: "Press Start 2P", cursive;
+    color: indianred;
+}
+
+form {
+    background: #fff2d8;
+    padding: 20px;
+    border: 4px solid #ff9f80;
+    box-shadow: 0 0 10px #ff9f80;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    max-width: 400px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+label {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 5px;
+    color: #6b4226;
+}
+
+input,
+textarea {
+    padding: 10px;
+    border: 2px solid #ff9f80;
+    border-radius: 5px;
+    background: #fae3c6;
+    font-size: 12px;
+    font-family: "Press Start 2P", cursive;
+    color: #6b4226;
+    outline: none;
+    margin-bottom: 10px;
+}
+
+input:focus,
+textarea:focus {
+    border-color: #e89060;
+}
+
+/* Adjust delete button form to be truly inline */
+.delete-form {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+.delete-form button {
+    padding: 5px 10px;
+    font-size: 12px;
+    background: #d9534f;
+    border: 2px solid #b52b27;
+}
+
+.delete-form button:hover {
+    background: #b52b27;
+    color: white;
+}

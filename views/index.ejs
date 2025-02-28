@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <title>Clubhouse</title>
+        <link rel="stylesheet" href="/css/retro_styles.css" />
     </head>
     <body>
         <h1>Welcome to the Clubhouse!</h1>
@@ -13,27 +14,24 @@
             Membership Status: <%= user.membership ? "Member" : "Not a Member"
             %>
         </p>
-        <% if (user && !user.membership) { %>
+
+        <% if (!user.membership) { %>
         <p><a href="/membership">Join the Club</a></p>
-        <% } %> <% if (user && user.membership && !user.admin) { %>
-        <a href="/admin">Become an Admin</a>
-        <br />
-        <br />
+        <% } else if (!user.admin) { %>
+        <p><a href="/admin">Become an Admin</a></p>
         <% } %>
 
-        <a href="/messages/new">Create a New Message</a>
-        <br />
-        <br />
-        <a href="/logout">Logout</a>
+        <p><a href="/messages/new">Create a New Message</a></p>
+        <p><a href="/logout">Logout</a></p>
         <% } else { %>
         <p>You are not logged in.</p>
         <p><a href="/login">Login</a> | <a href="/signup">Sign Up</a></p>
         <% } %>
 
         <h2>Messages</h2>
-        <ul>
+        <div class="message-container">
             <% messages.forEach(msg => { %>
-            <li>
+            <div class="message">
                 <h3><%= msg.title %></h3>
                 <p><%= msg.text %></p>
 
@@ -49,17 +47,16 @@
                 <% } else { %>
                 <p><em>(Author hidden – Members Only)</em></p>
                 <% } %> <% if (user && user.admin) { %>
-                <!-- Form to delete a message using method-override -->
                 <form
+                    class="delete-form"
                     action="/messages/<%= msg.id %>?_method=DELETE"
                     method="POST"
-                    style="display: inline"
                 >
                     <button type="submit">Delete</button>
                 </form>
                 <% } %>
-            </li>
+            </div>
             <% }) %>
-        </ul>
+        </div>
     </body>
 </html>
